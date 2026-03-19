@@ -4,6 +4,17 @@
 @section('content')
 <div class="p-8">
     <div class="max-w-3xl mx-auto">
+        <!-- Breadcrumb -->
+        <div class="flex items-center gap-2 text-xs text-gray-500 mb-6 slide-in">
+            <a href="{{ route('dashboard') }}" class="text-gray-500 hover:text-amber-400 transition-colors">Dashboard</a>
+            <span class="text-gray-600">/</span>
+            <a href="{{ route('patients.index') }}" class="text-gray-500 hover:text-amber-400 transition-colors">Patients</a>
+            <span class="text-gray-600">/</span>
+            <a href="{{ route('patients.show', $patient->id) }}" class="text-gray-500 hover:text-amber-400 transition-colors">{{ $patient->name }}</a>
+            <span class="text-gray-600">/</span>
+            <span class="text-gray-400">Edit</span>
+        </div>
+
         <div class="mb-8 slide-in">
             <a href="{{ route('patients.show', $patient->id) }}" class="text-gray-500 text-sm hover:text-amber-400 transition-colors">← Back to {{ $patient->name }}</a>
             <h1 class="font-display text-4xl font-bold text-white mt-3">Edit <em class="text-amber-400">Patient</em></h1>

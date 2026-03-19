@@ -5,6 +5,15 @@
 <div class="p-8">
     <div class="max-w-5xl mx-auto">
 
+        <!-- Breadcrumb -->
+        <div class="flex items-center gap-2 text-xs text-gray-500 mb-6 slide-in">
+            <a href="{{ route('dashboard') }}" class="text-gray-500 hover:text-amber-400 transition-colors">Dashboard</a>
+            <span class="text-gray-600">/</span>
+            <a href="{{ route('patients.index') }}" class="text-gray-500 hover:text-amber-400 transition-colors">Patients</a>
+            <span class="text-gray-600">/</span>
+            <span class="text-gray-400">New Patient</span>
+        </div>
+
         <!-- Header -->
         <div class="mb-8 slide-in">
             <a href="{{ route('patients.index') }}" class="text-gray-500 text-sm hover:text-amber-400 transition-colors">← Back to Patients</a>
@@ -182,13 +191,13 @@
                             <div class="flex justify-center py-4">
                                 <div class="relative flex items-center justify-center">
                                     <svg width="120" height="120" viewBox="0 0 120 120">
-                                        <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="8"/>
+                                        <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="8" />
                                         <circle id="prev_ring" cx="60" cy="60" r="50" fill="none" stroke="#f59e0b" stroke-width="8"
                                             stroke-linecap="round"
                                             stroke-dasharray="314"
                                             stroke-dashoffset="157"
                                             transform="rotate(-90 60 60)"
-                                            style="transition: stroke-dashoffset 1s cubic-bezier(0.34,1.56,0.64,1), stroke 0.5s ease;"/>
+                                            style="transition: stroke-dashoffset 1s cubic-bezier(0.34,1.56,0.64,1), stroke 0.5s ease;" />
                                     </svg>
                                     <div class="absolute text-center">
                                         <p id="prev_ring_score" class="text-2xl font-bold text-amber-400">50</p>
@@ -218,91 +227,120 @@
 
 @push('scripts')
 <script>
-const moodIcons = { Calm:'😌', Anxious:'😰', Joyful:'😊', Melancholic:'😔', Neutral:'😐', Distressed:'😣' };
+    const moodIcons = {
+        Calm: '😌',
+        Anxious: '😰',
+        Joyful: '😊',
+        Melancholic: '😔',
+        Neutral: '😐',
+        Distressed: '😣'
+    };
 
-function getInitials(name) {
-    const parts = name.trim().split(' ');
-    let init = parts[0] ? parts[0][0].toUpperCase() : '?';
-    if (parts[1]) init += parts[1][0].toUpperCase();
-    return init;
-}
-
-function scoreLabel(s) {
-    if (s >= 75) return 'High Empathy';
-    if (s >= 40) return 'Moderate Empathy';
-    return 'Low Empathy';
-}
-
-function scoreColor(s) {
-    if (s >= 75) return { bar: 'linear-gradient(90deg,#f59e0b,#fbbf24)', ring: '#f59e0b', text: '#f59e0b' };
-    if (s >= 40) return { bar: 'linear-gradient(90deg,#3b82f6,#60a5fa)', ring: '#60a5fa', text: '#60a5fa' };
-    return { bar: 'linear-gradient(90deg,#ef4444,#f87171)', ring: '#f87171', text: '#f87171' };
-}
-
-function scoreUpdate(val) {
-    document.getElementById('scoreVal').textContent = val;
-}
-
-function previewUpdate() {
-    const name  = document.getElementById('f_name').value;
-    const age   = document.getElementById('f_age').value;
-    const sex   = document.getElementById('f_sex').value;
-    const addr  = document.getElementById('f_address').value;
-    const score = parseInt(document.getElementById('f_score').value);
-    const mood  = document.getElementById('f_mood').value;
-    const colors = scoreColor(score);
-
-    document.getElementById('prev_name').textContent    = name || 'Patient Name';
-    document.getElementById('prev_initials').textContent = name ? getInitials(name) : '?';
-    document.getElementById('prev_meta').textContent    = (age ? age + ' yrs' : 'Age') + ' · ' + (sex || 'Sex');
-    document.getElementById('prev_address').textContent  = addr || '—';
-    document.getElementById('prev_mood').textContent    = (moodIcons[mood] || '😐') + ' ' + mood;
-    document.getElementById('prev_score').textContent   = score;
-    document.getElementById('prev_ring_score').textContent = score;
-    document.getElementById('prev_label').textContent   = scoreLabel(score);
-
-    // Colors
-    document.getElementById('prev_score').style.color      = colors.text;
-    document.getElementById('prev_ring_score').style.color = colors.text;
-    document.getElementById('prev_label').style.color      = colors.text;
-    document.getElementById('prev_bar').style.background   = colors.bar;
-    document.getElementById('prev_bar').style.width        = score + '%';
-
-    // Ring
-    const circumference = 314;
-    const offset = circumference - (score / 100) * circumference;
-    const ring = document.getElementById('prev_ring');
-    ring.style.strokeDashoffset = offset;
-    ring.style.stroke = colors.ring;
-}
-
-// Trend chart
-const trendCtx = document.getElementById('trendChart').getContext('2d');
-const trendChart = new Chart(trendCtx, {
-    type: 'line',
-    data: {
-        labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
-        datasets: [{
-            data: [45,52,48,60,58,65,62,70,68,75,72,50],
-            borderColor: '#f59e0b',
-            backgroundColor: 'rgba(245,158,11,0.1)',
-            borderWidth: 1.5,
-            pointRadius: 0,
-            fill: true,
-            tension: 0.4,
-        }]
-    },
-    options: {
-        responsive: true,
-        plugins: { legend: { display: false } },
-        scales: {
-            x: { display: false },
-            y: { display: false, min: 0, max: 100 }
-        }
+    function getInitials(name) {
+        const parts = name.trim().split(' ');
+        let init = parts[0] ? parts[0][0].toUpperCase() : '?';
+        if (parts[1]) init += parts[1][0].toUpperCase();
+        return init;
     }
-});
 
-// Init
-previewUpdate();
+    function scoreLabel(s) {
+        if (s >= 75) return 'High Empathy';
+        if (s >= 40) return 'Moderate Empathy';
+        return 'Low Empathy';
+    }
+
+    function scoreColor(s) {
+        if (s >= 75) return {
+            bar: 'linear-gradient(90deg,#f59e0b,#fbbf24)',
+            ring: '#f59e0b',
+            text: '#f59e0b'
+        };
+        if (s >= 40) return {
+            bar: 'linear-gradient(90deg,#3b82f6,#60a5fa)',
+            ring: '#60a5fa',
+            text: '#60a5fa'
+        };
+        return {
+            bar: 'linear-gradient(90deg,#ef4444,#f87171)',
+            ring: '#f87171',
+            text: '#f87171'
+        };
+    }
+
+    function scoreUpdate(val) {
+        document.getElementById('scoreVal').textContent = val;
+    }
+
+    function previewUpdate() {
+        const name = document.getElementById('f_name').value;
+        const age = document.getElementById('f_age').value;
+        const sex = document.getElementById('f_sex').value;
+        const addr = document.getElementById('f_address').value;
+        const score = parseInt(document.getElementById('f_score').value);
+        const mood = document.getElementById('f_mood').value;
+        const colors = scoreColor(score);
+
+        document.getElementById('prev_name').textContent = name || 'Patient Name';
+        document.getElementById('prev_initials').textContent = name ? getInitials(name) : '?';
+        document.getElementById('prev_meta').textContent = (age ? age + ' yrs' : 'Age') + ' · ' + (sex || 'Sex');
+        document.getElementById('prev_address').textContent = addr || '—';
+        document.getElementById('prev_mood').textContent = (moodIcons[mood] || '😐') + ' ' + mood;
+        document.getElementById('prev_score').textContent = score;
+        document.getElementById('prev_ring_score').textContent = score;
+        document.getElementById('prev_label').textContent = scoreLabel(score);
+
+        // Colors
+        document.getElementById('prev_score').style.color = colors.text;
+        document.getElementById('prev_ring_score').style.color = colors.text;
+        document.getElementById('prev_label').style.color = colors.text;
+        document.getElementById('prev_bar').style.background = colors.bar;
+        document.getElementById('prev_bar').style.width = score + '%';
+
+        // Ring
+        const circumference = 314;
+        const offset = circumference - (score / 100) * circumference;
+        const ring = document.getElementById('prev_ring');
+        ring.style.strokeDashoffset = offset;
+        ring.style.stroke = colors.ring;
+    }
+
+    // Trend chart
+    const trendCtx = document.getElementById('trendChart').getContext('2d');
+    const trendChart = new Chart(trendCtx, {
+        type: 'line',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            datasets: [{
+                data: [45, 52, 48, 60, 58, 65, 62, 70, 68, 75, 72, 50],
+                borderColor: '#f59e0b',
+                backgroundColor: 'rgba(245,158,11,0.1)',
+                borderWidth: 1.5,
+                pointRadius: 0,
+                fill: true,
+                tension: 0.4,
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                x: {
+                    display: false
+                },
+                y: {
+                    display: false,
+                    min: 0,
+                    max: 100
+                }
+            }
+        }
+    });
+
+    // Init
+    previewUpdate();
 </script>
 @endpush

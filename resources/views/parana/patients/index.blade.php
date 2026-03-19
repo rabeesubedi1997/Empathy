@@ -3,6 +3,13 @@
 
 @section('content')
 <div class="p-8 space-y-6">
+    <!-- Breadcrumb -->
+    <div class="flex items-center gap-2 text-xs text-gray-500 mb-6 slide-in">
+        <a href="{{ route('dashboard') }}" class="text-gray-500 hover:text-amber-400 transition-colors">Dashboard</a>
+        <span class="text-gray-600">/</span>
+        <span class="text-gray-400">Patients</span>
+    </div>
+
     <!-- Header -->
     <div class="flex items-center justify-between slide-in">
         <div>
@@ -101,8 +108,10 @@
 
 @push('scripts')
 <script>
-document.querySelectorAll('.empathy-bar').forEach(bar => {
-    setTimeout(() => { bar.style.width = bar.dataset.width + '%'; }, 300);
-});
+    document.querySelectorAll('.empathy-bar').forEach(bar => {
+        setTimeout(() => {
+            bar.style.width = bar.dataset.width + '%';
+        }, 300);
+    });
 </script>
 @endpush

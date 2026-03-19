@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,35 +8,94 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,400&display=swap');
-        * { font-family: 'Inter', sans-serif; }
-        .font-display { font-family: 'Playfair Display', serif; }
+
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .font-display {
+            font-family: 'Playfair Display', serif;
+        }
+
         @keyframes pulse-glow {
-            0%, 100% { box-shadow: 0 0 20px rgba(251,191,36,0.3), 0 0 40px rgba(251,191,36,0.1); }
-            50% { box-shadow: 0 0 40px rgba(251,191,36,0.6), 0 0 80px rgba(251,191,36,0.2); }
+
+            0%,
+            100% {
+                box-shadow: 0 0 20px rgba(251, 191, 36, 0.3), 0 0 40px rgba(251, 191, 36, 0.1);
+            }
+
+            50% {
+                box-shadow: 0 0 40px rgba(251, 191, 36, 0.6), 0 0 80px rgba(251, 191, 36, 0.2);
+            }
         }
+
         @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
         }
+
         @keyframes particle {
-            0% { opacity: 0; transform: translateY(0) scale(0); }
-            50% { opacity: 1; transform: translateY(-60px) scale(1); }
-            100% { opacity: 0; transform: translateY(-120px) scale(0); }
+            0% {
+                opacity: 0;
+                transform: translateY(0) scale(0);
+            }
+
+            50% {
+                opacity: 1;
+                transform: translateY(-60px) scale(1);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(-120px) scale(0);
+            }
         }
-        .glow-amber { animation: pulse-glow 3s ease-in-out infinite; }
-        .float-anim { animation: float 6s ease-in-out infinite; }
-        .particle { animation: particle 4s ease-in-out infinite; }
-        .particle:nth-child(2) { animation-delay: 0.8s; }
-        .particle:nth-child(3) { animation-delay: 1.6s; }
-        .particle:nth-child(4) { animation-delay: 2.4s; }
+
+        .glow-amber {
+            animation: pulse-glow 3s ease-in-out infinite;
+        }
+
+        .float-anim {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .particle {
+            animation: particle 4s ease-in-out infinite;
+        }
+
+        .particle:nth-child(2) {
+            animation-delay: 0.8s;
+        }
+
+        .particle:nth-child(3) {
+            animation-delay: 1.6s;
+        }
+
+        .particle:nth-child(4) {
+            animation-delay: 2.4s;
+        }
+
         .bg-cinematic {
-            background: radial-gradient(ellipse at 30% 20%, rgba(120,53,15,0.4) 0%, transparent 60%),
-                        radial-gradient(ellipse at 70% 80%, rgba(30,58,138,0.3) 0%, transparent 60%),
-                        linear-gradient(135deg, #0a0a0f 0%, #0f0f1a 50%, #0a0a0f 100%);
+            background: radial-gradient(ellipse at 30% 20%, rgba(120, 53, 15, 0.4) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 80%, rgba(30, 58, 138, 0.3) 0%, transparent 60%),
+                linear-gradient(135deg, #0a0a0f 0%, #0f0f1a 50%, #0a0a0f 100%);
         }
-        .glass { background: rgba(255,255,255,0.04); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.08); }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
     </style>
 </head>
+
 <body class="min-h-screen bg-cinematic flex items-center justify-center p-4 overflow-hidden">
 
     <!-- Floating particles -->
@@ -62,12 +122,12 @@
             <p class="text-gray-400 text-sm mb-8">Sign in to access the empathy dashboard</p>
 
             @if($errors->any())
-                <div class="mb-6 p-4 rounded-lg" style="background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3);">
-                    <p class="text-red-400 text-sm">{{ $errors->first() }}</p>
-                </div>
+            <div class="mb-6 p-4 rounded-lg" style="background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3);">
+                <p class="text-red-400 text-sm">{{ $errors->first() }}</p>
+            </div>
             @endif
 
-            <form action="/admin/login" method="POST" class="space-y-5">
+            <form action="{{ route('admin.login') }}" method="POST" class="space-y-5">
                 @csrf
                 <div>
                     <label class="block text-gray-400 text-xs uppercase tracking-widest mb-2">Email Address</label>
@@ -78,7 +138,7 @@
                 </div>
                 <div>
                     <label class="block text-gray-400 text-xs uppercase tracking-widest mb-2">Password</label>
-                    <input type="password" name="password" value="parana2024"
+                    <input type="password" name="password"
                         class="w-full px-4 py-3 rounded-xl text-white placeholder-gray-600 outline-none transition-all duration-300 focus:border-amber-400"
                         style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);"
                         placeholder="••••••••" required>
@@ -113,4 +173,5 @@
         <p class="text-center text-gray-600 text-xs mt-6">© {{ date('Y') }} PARANA Empathy Detector. All rights reserved.</p>
     </div>
 </body>
+
 </html>

@@ -2,6 +2,13 @@
 @section('title', 'Dashboard')
 
 @section('content')
+<!-- BREADCRUMB -->
+<div class="px-8 py-3" style="border-bottom:1px solid rgba(255,255,255,0.08);">
+    <div class="flex items-center gap-2 text-xs text-gray-500 slide-in">
+        <span class="text-gray-400">Dashboard</span>
+    </div>
+</div>
+
 <div class="p-8 space-y-8">
 
     <!-- Header -->
@@ -125,69 +132,106 @@
 
 @push('scripts')
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    // Animate empathy bars
-    document.querySelectorAll('.empathy-bar').forEach(bar => {
-        setTimeout(() => { bar.style.width = bar.dataset.width + '%'; }, 300);
-    });
+    document.addEventListener('DOMContentLoaded', function() {
+        // Animate empathy bars
+        document.querySelectorAll('.empathy-bar').forEach(bar => {
+            setTimeout(() => {
+                bar.style.width = bar.dataset.width + '%';
+            }, 300);
+        });
 
-    // Distribution Chart
-    const distCtx = document.getElementById('distributionChart').getContext('2d');
-    new Chart(distCtx, {
-        type: 'bar',
-        data: {
-            labels: ['0-9','10-19','20-29','30-39','40-49','50-59','60-69','70-79','80-89','90-100'],
-            datasets: [{
-                label: 'Patients',
-                data: [0,1,1,2,2,2,1,3,3,2],
-                backgroundColor: [
-                    'rgba(248,113,113,0.5)','rgba(248,113,113,0.5)','rgba(248,113,113,0.5)','rgba(248,113,113,0.5)',
-                    'rgba(96,165,250,0.5)','rgba(96,165,250,0.5)','rgba(96,165,250,0.5)',
-                    'rgba(245,158,11,0.5)','rgba(245,158,11,0.6)','rgba(245,158,11,0.7)'
-                ],
-                borderColor: [
-                    '#f87171','#f87171','#f87171','#f87171',
-                    '#60a5fa','#60a5fa','#60a5fa',
-                    '#f59e0b','#f59e0b','#f59e0b'
-                ],
-                borderWidth: 1,
-                borderRadius: 6,
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: { legend: { display: false } },
-            scales: {
-                x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#6b7280', font: { size: 10 } } },
-                y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#6b7280', font: { size: 10 }, stepSize: 1 } }
+        // Distribution Chart
+        const distCtx = document.getElementById('distributionChart').getContext('2d');
+        new Chart(distCtx, {
+            type: 'bar',
+            data: {
+                labels: ['0-9', '10-19', '20-29', '30-39', '40-49', '50-59', '60-69', '70-79', '80-89', '90-100'],
+                datasets: [{
+                    label: 'Patients',
+                    data: [0, 1, 1, 2, 2, 2, 1, 3, 3, 2],
+                    backgroundColor: [
+                        'rgba(248,113,113,0.5)', 'rgba(248,113,113,0.5)', 'rgba(248,113,113,0.5)', 'rgba(248,113,113,0.5)',
+                        'rgba(96,165,250,0.5)', 'rgba(96,165,250,0.5)', 'rgba(96,165,250,0.5)',
+                        'rgba(245,158,11,0.5)', 'rgba(245,158,11,0.6)', 'rgba(245,158,11,0.7)'
+                    ],
+                    borderColor: [
+                        '#f87171', '#f87171', '#f87171', '#f87171',
+                        '#60a5fa', '#60a5fa', '#60a5fa',
+                        '#f59e0b', '#f59e0b', '#f59e0b'
+                    ],
+                    borderWidth: 1,
+                    borderRadius: 6,
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            color: 'rgba(255,255,255,0.04)'
+                        },
+                        ticks: {
+                            color: '#6b7280',
+                            font: {
+                                size: 10
+                            }
+                        }
+                    },
+                    y: {
+                        grid: {
+                            color: 'rgba(255,255,255,0.04)'
+                        },
+                        ticks: {
+                            color: '#6b7280',
+                            font: {
+                                size: 10
+                            },
+                            stepSize: 1
+                        }
+                    }
+                }
             }
-        }
-    });
+        });
 
-    // Mood Chart
-    const moodCtx = document.getElementById('moodChart').getContext('2d');
-    new Chart(moodCtx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Calm', 'Anxious', 'Joyful', 'Melancholic', 'Neutral', 'Distressed'],
-            datasets: [{
-                data: [4, 3, 4, 3, 2, 2],
-                backgroundColor: [
-                    'rgba(245,158,11,0.7)','rgba(96,165,250,0.7)','rgba(52,211,153,0.7)',
-                    'rgba(167,139,250,0.7)','rgba(156,163,175,0.7)','rgba(248,113,113,0.7)'
-                ],
-                borderColor: 'transparent',
-                hoverOffset: 6,
-            }]
-        },
-        options: {
-            responsive: true,
-            cutout: '70%',
-            plugins: {
-                legend: { position: 'bottom', labels: { color: '#9ca3af', font: { size: 10 }, padding: 12, boxWidth: 10 } }
+        // Mood Chart
+        const moodCtx = document.getElementById('moodChart').getContext('2d');
+        new Chart(moodCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Calm', 'Anxious', 'Joyful', 'Melancholic', 'Neutral', 'Distressed'],
+                datasets: [{
+                    data: [4, 3, 4, 3, 2, 2],
+                    backgroundColor: [
+                        'rgba(245,158,11,0.7)', 'rgba(96,165,250,0.7)', 'rgba(52,211,153,0.7)',
+                        'rgba(167,139,250,0.7)', 'rgba(156,163,175,0.7)', 'rgba(248,113,113,0.7)'
+                    ],
+                    borderColor: 'transparent',
+                    hoverOffset: 6,
+                }]
+            },
+            options: {
+                responsive: true,
+                cutout: '70%',
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: '#9ca3af',
+                            font: {
+                                size: 10
+                            },
+                            padding: 12,
+                            boxWidth: 10
+                        }
+                    }
+                }
             }
-        }
+        });
     });
-});
 </script>
 @endpush
