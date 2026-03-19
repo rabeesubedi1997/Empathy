@@ -388,6 +388,85 @@
   .btn-sci:hover {
     transform: scale(1.04);
   }
+
+  /* ECG Audio Controls */
+  #ecg-audio-toggle {
+    transition: all 0.2s ease;
+    cursor: pointer;
+    font-weight: 700;
+    text-shadow: 0 0 8px rgba(0,255,159,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  #ecg-audio-toggle:hover {
+    background: rgba(0,255,159,0.3) !important;
+    transform: scale(1.05);
+    text-shadow: 0 0 12px rgba(0,255,159,0.5);
+  }
+  
+  #ecg-audio-toggle:active {
+    transform: scale(0.95);
+  }
+  
+  #ecg-volume-control {
+    transition: all 0.2s ease;
+    cursor: pointer;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  #ecg-volume-control:hover {
+    background: rgba(255,255,255,0.15) !important;
+    transform: scale(1.05);
+  }
+  
+  #ecg-volume-control:active {
+    transform: scale(0.95);
+  }
+  
+  #ecg-hide-controls {
+    transition: all 0.2s ease;
+    cursor: pointer;
+    font-weight: 600;
+    opacity: 0.7;
+  }
+  
+  #ecg-hide-controls:hover {
+    background: rgba(255,255,255,0.1) !important;
+    opacity: 1;
+    transform: scale(1.1);
+  }
+  
+  #ecg-hide-controls:active {
+    transform: scale(0.9);
+  }
+  
+  .ecg-controls-hidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(120%);
+  }
+
+  /* Data Transfer Animation */
+  .transfer-fill {
+    transition: width 0.3s ease;
+    background: linear-gradient(90deg, currentColor 0%, rgba(255,255,255,0.1) 50%, currentColor 100%);
+    background-size: 200% 100%;
+    animation: shimmer 2s linear infinite;
+  }
+  
+  @keyframes shimmer {
+    0% { background-position: -200% center; }
+    100% { background-position: 200% center; }
+  }
+  
+  .animate-pulse {
+    animation: pulse-ring 2s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite;
+  }
 </style>
 
 <!-- ============================================================
@@ -580,6 +659,27 @@
         <span class="text-green-400 text-[10px] tracking-widest">SINUS RHYTHM NORMAL<span class="blink ml-1">_</span></span>
         <span class="text-gray-600 text-[10px]">EMPATHY COHERENCE: {{ $patient->empathy_score }}%</span>
         <span class="text-green-400 text-[10px]" id="ecg-timer">00:00:00</span>
+      </div>
+      
+      <!-- ECG Audio Controls -->
+      <div id="ecg-controls-container" class="absolute top-3 right-4 flex flex-col items-end gap-2">
+        <div class="flex items-center gap-1 mb-2">
+          <button id="ecg-audio-toggle" class="px-2 py-1 rounded text-xs font-bold transition-all duration-200 flex items-center gap-1" style="background:rgba(0,255,159,0.2); color:#00ff9f; border:1px solid rgba(0,255,159,0.3); min-width:60px;">
+            <span id="ecg-play-icon">▶</span>
+            <span id="ecg-audio-text">PLAY</span>
+          </button>
+          <button id="ecg-volume-control" class="px-2 py-1 rounded text-xs font-bold transition-all duration-200" style="background:rgba(255,255,255,0.1); color:#9ca3af; border:1px solid rgba(255,255,255,0.2); min-width:30px;">
+            <span id="ecg-volume-icon">🔊</span>
+          </button>
+          <button id="ecg-hide-controls" class="px-1 py-0.5 rounded text-xs font-medium transition-all duration-200" style="background:rgba(255,255,255,0.05); color:#6b7280; border:1px solid rgba(255,255,255,0.1);">
+            ✕
+          </button>
+        </div>
+      </div>
+      
+      <!-- Show controls indicator (hidden by default) -->
+      <div id="show-controls-indicator" class="absolute top-3 right-4 px-2 py-1 rounded text-xs font-medium transition-all duration-200 cursor-pointer" style="background:rgba(0,255,159,0.1); color:#00ff9f; border:1px solid rgba(0,255,159,0.2); display: none;">
+        🔊
       </div>
     </div>
 
@@ -842,6 +942,53 @@
       <span class="text-amber-400 text-[9px] tracking-widest">PARANA EMPATHY DETECTOR</span>
     </div>
   </div>
+
+  <!-- DATA TRANSFER ANIMATION -->
+  <div class="panel" style="padding:16px; border-color:rgba(0,255,159,0.2); margin-top:12px;">
+    <div class="panel-header text-green-400 mb-4">⬡ Data Transfer Stream</div>
+    <div class="flex justify-between items-center mb-4">
+      <div class="flex items-center gap-2">
+        <div class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
+        <span class="text-green-400 text-xs">LIVE STREAM</span>
+      </div>
+      <div class="text-gray-600 text-xs">
+        <span id="data-rate">0.0</span> GB/s
+      </div>
+    </div>
+    
+    <!-- Transfer visualization -->
+    <div class="relative h-20 mb-4">
+      <!-- TX/RX indicators -->
+      <div class="flex justify-between items-center h-full">
+        <div class="flex-1">
+          <div class="text-xs text-gray-500 mb-1">TRANSMIT</div>
+          <div class="h-12 bg-gray-800 rounded relative overflow-hidden">
+            <div id="tx-bar" class="transfer-fill h-full bg-green-400 transition-all duration-300" style="width: 65%;"></div>
+          </div>
+          <div class="text-xs text-green-400 mt-1">65%</div>
+        </div>
+        
+        <div class="flex-1">
+          <div class="text-xs text-gray-500 mb-1 text-right">RECEIVE</div>
+          <div class="h-12 bg-gray-800 rounded relative overflow-hidden">
+            <div id="rx-bar" class="transfer-fill h-full bg-blue-400 transition-all duration-300" style="width: 45%;"></div>
+          </div>
+          <div class="text-xs text-blue-400 mt-1 text-right">45%</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Node visualization -->
+    <div class="grid grid-cols-6 gap-2">
+      @for($i=0;$i<6;$i++)
+      <div class="text-center" data-node="{{ $i }}">
+        <div class="w-8 h-8 rounded-full bg-gray-800 border border-gray-700 flex items-center justify-center mb-1">
+          <div class="node-value text-xs text-gray-400">{{ rand(20, 99) }}</div>
+        </div>
+        <div class="text-xs text-gray-600">NODE {{ $i + 1 }}</div>
+      @endfor
+    </div>
+  </div>
 </div>
 </div>
 </div>
@@ -1084,6 +1231,232 @@
         }
       }
     });
+
+    // ─── ECG AUDIO SYSTEM ───
+    class ECGBeeper {
+      constructor() {
+        this.audioContext = null;
+        this.isPlaying = false;
+        this.volume = 0.4;
+        this.beatInterval = null;
+        this.controlsVisible = true;
+        this.initAudio();
+        this.setupControls();
+      }
+
+      initAudio() {
+        try {
+          window.AudioContext = window.AudioContext || window.webkitAudioContext;
+          this.audioContext = new AudioContext();
+        } catch (e) {
+          console.log('Web Audio API not supported');
+        }
+      }
+
+      createECGBeep() {
+        if (!this.audioContext) return;
+        
+        const now = this.audioContext.currentTime;
+        
+        // Create the main beep (like the YouTube video)
+        const mainOsc = this.audioContext.createOscillator();
+        const mainGain = this.audioContext.createGain();
+        
+        mainOsc.connect(mainGain);
+        mainGain.connect(this.audioContext.destination);
+        
+        mainOsc.frequency.setValueAtTime(1000, now);
+        mainOsc.type = 'sine';
+        
+        mainGain.gain.setValueAtTime(0, now);
+        mainGain.gain.linearRampToValueAtTime(this.volume, now + 0.01);
+        mainGain.gain.linearRampToValueAtTime(this.volume * 0.3, now + 0.05);
+        mainGain.gain.linearRampToValueAtTime(0, now + 0.08);
+        
+        mainOsc.start(now);
+        mainOsc.stop(now + 0.08);
+        
+        // Create the secondary click sound
+        const clickOsc = this.audioContext.createOscillator();
+        const clickGain = this.audioContext.createGain();
+        
+        clickOsc.connect(clickGain);
+        clickGain.connect(this.audioContext.destination);
+        
+        clickOsc.frequency.setValueAtTime(2000, now + 0.06);
+        clickOsc.type = 'sine';
+        
+        clickGain.gain.setValueAtTime(0, now + 0.06);
+        clickGain.gain.linearRampToValueAtTime(this.volume * 0.2, now + 0.07);
+        clickGain.gain.linearRampToValueAtTime(0, now + 0.08);
+        
+        clickOsc.start(now + 0.06);
+        clickOsc.stop(now + 0.08);
+      }
+
+      startBeeping() {
+        if (this.isPlaying) return;
+        
+        this.isPlaying = true;
+        this.createECGBeep();
+        this.beatInterval = setInterval(() => this.createECGBeep(), 1000);
+        
+        // Update button
+        this.updatePlayButton(true);
+      }
+
+      stopBeeping() {
+        if (!this.isPlaying) return;
+        
+        this.isPlaying = false;
+        if (this.beatInterval) {
+          clearInterval(this.beatInterval);
+          this.beatInterval = null;
+        }
+        
+        // Update button
+        this.updatePlayButton(false);
+      }
+
+      updatePlayButton(isPlaying) {
+        const playIcon = document.getElementById('ecg-play-icon');
+        const playText = document.getElementById('ecg-audio-text');
+        
+        if (playIcon) playIcon.textContent = isPlaying ? '⏸' : '▶';
+        if (playText) playText.textContent = isPlaying ? 'PAUSE' : 'PLAY';
+      }
+
+      toggle() {
+        if (this.isPlaying) {
+          this.stopBeeping();
+        } else {
+          this.startBeeping();
+        }
+      }
+
+      setVolume(level) {
+        this.volume = Math.max(0, Math.min(1, level));
+      }
+
+      toggleControlsVisibility() {
+        const controlsContainer = document.getElementById('ecg-controls-container');
+        const hideBtn = document.getElementById('ecg-hide-controls');
+        const showIndicator = document.getElementById('show-controls-indicator');
+        
+        if (controlsContainer && hideBtn && showIndicator) {
+          this.controlsVisible = !this.controlsVisible;
+          
+          if (this.controlsVisible) {
+            controlsContainer.classList.remove('ecg-controls-hidden');
+            controlsContainer.style.display = 'flex';
+            showIndicator.style.display = 'none';
+          } else {
+            controlsContainer.classList.add('ecg-controls-hidden');
+            controlsContainer.style.display = 'none';
+            showIndicator.style.display = 'block';
+          }
+        }
+      }
+
+      setupControls() {
+        // Play/Pause button
+        const toggleBtn = document.getElementById('ecg-audio-toggle');
+        if (toggleBtn) {
+          toggleBtn.addEventListener('click', () => this.toggle());
+        }
+
+        // Volume control
+        const volumeBtn = document.getElementById('ecg-volume-control');
+        if (volumeBtn) {
+          volumeBtn.addEventListener('click', () => {
+            // Cycle through volume levels
+            const levels = [0, 0.2, 0.4, 0.6, 0.8, 1.0];
+            const currentIndex = levels.indexOf(this.volume);
+            const nextIndex = (currentIndex + 1) % levels.length;
+            this.setVolume(levels[nextIndex]);
+            
+            // Update button display
+            const icons = ['🔇', '🔈', '🔉', '🔊', '🔊', '🔊'];
+            const volumeIcon = document.getElementById('ecg-volume-icon');
+            if (volumeIcon) volumeIcon.textContent = icons[nextIndex];
+          });
+        }
+
+        // Hide controls button
+        const hideBtn = document.getElementById('ecg-hide-controls');
+        if (hideBtn) {
+          hideBtn.addEventListener('click', () => this.toggleControlsVisibility());
+        }
+
+        // Show controls indicator
+        const showIndicator = document.getElementById('show-controls-indicator');
+        if (showIndicator) {
+          showIndicator.addEventListener('click', () => this.toggleControlsVisibility());
+        }
+      }
+    }
+
+    // Initialize ECG audio system
+    const ecgAudio = new ECGBeeper();
+
+    // ─── DATA TRANSFER ANIMATION ───
+    class DataTransferAnimation {
+      constructor() {
+        this.txPercent = 65;
+        this.rxPercent = 45;
+        this.nodeValues = Array(6).fill(0).map(() => Math.floor(Math.random() * 80) + 20);
+        this.init();
+      }
+
+      init() {
+        this.animateTransfer();
+        this.animateNodes();
+        setInterval(() => this.updateValues(), 2000);
+      }
+
+      animateTransfer() {
+        setInterval(() => {
+          // Animate TX/RX bars
+          this.txPercent = Math.max(20, Math.min(95, this.txPercent + (Math.random() - 0.5) * 10));
+          this.rxPercent = Math.max(15, Math.min(85, this.rxPercent + (Math.random() - 0.5) * 8));
+
+          const txBar = document.getElementById('tx-bar');
+          const rxBar = document.getElementById('rx-bar');
+          const dataRate = document.getElementById('data-rate');
+
+          if (txBar) txBar.style.width = this.txPercent + '%';
+          if (rxBar) rxBar.style.width = this.rxPercent + '%';
+          if (dataRate) dataRate.textContent = (this.txPercent * 0.08 + Math.random() * 0.4).toFixed(1) + ' GB/s';
+        }, 1500);
+      }
+
+      animateNodes() {
+        setInterval(() => {
+          // Update node values
+          this.nodeValues = this.nodeValues.map(val => {
+            const change = (Math.random() - 0.5) * 20;
+            return Math.max(10, Math.min(99, val + change));
+          });
+
+          // Update DOM
+          for (let i = 0; i < 6; i++) {
+            const nodeEl = document.querySelector(`[data-node="${i}"] .node-value`);
+            if (nodeEl) {
+              nodeEl.textContent = this.nodeValues[i];
+            }
+          }
+        }, 800);
+      }
+
+      updateValues() {
+        // Random value updates for realism
+        const randomIndex = Math.floor(Math.random() * 6);
+        this.nodeValues[randomIndex] = Math.floor(Math.random() * 80) + 20;
+      }
+    }
+
+    // Initialize data transfer animation
+    const dataTransfer = new DataTransferAnimation();
 
     // ─── LIVE WAVEFORM NOISE for ECG color oscillation ───
     setInterval(() => {
